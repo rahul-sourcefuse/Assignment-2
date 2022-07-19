@@ -1,8 +1,10 @@
+//hide table until click on load button
 function hideTable() {
    document.getElementById('table').style.visibility = "hidden";
 }
 
-
+//on clicking load data populated from json file in UI and also stored in array for further use
+var arrItems=[];
 function load() {
    document.getElementById('load').innerText = "Refresh Data";
    document.getElementById("table").style.visibility = "visible";
@@ -14,7 +16,16 @@ function load() {
          let placeholder = document.querySelector("#data-output");
          let out = "";
          let i = 0;
+         var arrItemsNew;
          for (let product of products) {
+            arrItemsNew=[];
+            arrItemsNew.push(product.firstName);
+            arrItemsNew.push(product.middleName);
+            arrItemsNew.push(product.lastName);
+            arrItemsNew.push(product.email);
+            arrItemsNew.push(product.phoneNumber);
+            arrItemsNew.push(product.Role);
+            arrItemsNew.push(product.Address);
             out += `
              <tr id="t${i}">
                 <td>${product.firstName} </td>
@@ -29,51 +40,45 @@ function load() {
              </tr>
           `;
             i++;
-
+            arrItems.push(arrItemsNew)
          }
+         // console.log(arrItems);
 
          placeholder.innerHTML = out;
-         console.log("loaded");
+         // console.log("loaded");
       });
 
 
 }
+// console.log(arrItems);
 
+//This function remove Table Row from the table when user Clicks
 function removeTr(e) {
    var ide = e.parentNode.parentNode;
    console.log(ide)
    var p = ide.parentNode;
    p.removeChild(ide);
 
-   // document.getElementById("btn").removeChild(savebutton);
-
 }
+//This function cancel Editing process of row and load previous data 
 
 function cancelTr(p, e, btn, sbtn) {
 
-   // console.log(e.parentNode.parentNode)
-   // console.log(p.rowIndex);
-   // var a=`t${p.rowIndex-1}`
-   // console.log(a);
-   // console.log(document.getElementById(a).previousSibling);
-   // console.log(e.parentNode);
+   var index=p.rowIndex;
+   // console.log(arrItems[index]);
+   // // console.log(p.cells);
+   // console.log(arrItems);
 
-   // table.rows[p.rowIndex].innerHTML=p.innerHTML;
-   // console.log(table.rows[p.rowIndex].innerHTML);
-   // var ab = p.parentNode
-
-   // console.log(ab);
-   // const val = p.innerHTML;
-   
-
-   // console.log(val);
+   for(let i =0;i<arrItems[index].length;i++){
+      p.cells[i].innerHTML=arrItems[index][i];
+   }
 
    document.getElementById("btn").removeChild(sbtn);
    document.getElementById("btn").removeChild(btn);
 
-
 }
 
+//This function load save and cancel buttons in end of table when user Click on edit button
 
 function buttons(e) {
 
@@ -82,14 +87,12 @@ function buttons(e) {
    console.log(ide)
    ide.contentEditable = "true";
    ide.id = "edit";
-   console.log("edit");
+   // console.log("edit");
 
    document.getElementById("buttons").contentEditable = "false";
 
-   //  var editElem = document.getElementById("edit");
    var saveBtn = document.getElementById("saveid");
    if (!saveBtn) {
-      //#myElementID element DOES NOT exist
       var savebutton = document.createElement("button");
       savebutton.innerHTML = "Save";
       savebutton.className = "save";
@@ -104,9 +107,6 @@ function buttons(e) {
 
    var cancelBtn = document.getElementById("cancelid");
    if (!cancelBtn) {
-      //#myElementID element DOES NOT exist
-
-
       var cancelButton = document.createElement("button");
       cancelButton.innerHTML = "Cancel";
       cancelButton.class = "cancel";
@@ -119,13 +119,14 @@ function buttons(e) {
       }
    }
 
+
+   //This functions save data which is entered by user in editing process
+
    function saveEdits() {
-      console.log("saveEdits")
+      // console.log("saveEdits")
 
       //get the editable element
       var editElem = document.getElementById("edit");
-
-
 
       //get the edited element content
       var userVersion = editElem.innerHTML;
@@ -144,10 +145,3 @@ function buttons(e) {
    }
 
 };
-
-
-function checkEdits() {
-   //find out if the user has previously saved edits
-   if (localStorage.userEdits != null)
-      document.getElementById("edit").innerHTML = localStorage.userEdits;
-}
